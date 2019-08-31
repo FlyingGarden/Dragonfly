@@ -4,6 +4,7 @@ import { file_length, read_file, is_file, file_exists, } from './utils/fs.js';
 import Request from './http/Request.js';
 import Response from './http/Response.js';
 import { ext2mime, } from './http/mime.js';
+import notFound from './routing/not-found.js';
 
 /**
  * main Application class of Dragonfly
@@ -74,6 +75,8 @@ export default class App
 				
 				denoRequest.respond( await makeFileResponse( path, ), );
 			}
+			else
+				denoRequest.respond( await notFound( { request, app:this, }, ), );
 		};
 		
 		const server= HttpServer.serve( host, )[Symbol.asyncIterator]();

@@ -1,5 +1,6 @@
 import * as Path from '../utils/path.js';
 import Route from './Route.js';
+import Response from '../http/Response.js';
 
 export default class Router
 {
@@ -39,6 +40,28 @@ export default class Router
 			
 			return route;
 		}, );
+	}
+	
+	/**
+	 * Dispatch a request to a route
+	 * 
+	 * @param request {Request}
+	 * 
+	 * @return {Route}
+	 */
+	dispatch( request, )
+	{
+		return this.#routes.reduce( ( result, route, )=> {
+			const level= route.match( request, );
+			
+			if( level > result.level )
+			{
+				result.level= level;
+				result.route= route;
+			}
+			
+			return result;
+		}, { level: 0, route: null, }, ).route;
 	}
 	
 	/**

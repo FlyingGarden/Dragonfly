@@ -14,6 +14,11 @@ export default class Router
 	#routes;
 	
 	/**
+	 * @type {Map}
+	 */
+	#identifications= new Map();
+	
+	/**
 	 * Consturct a router
 	 * 
 	 * @param 0.routes          {}[]
@@ -29,8 +34,21 @@ export default class Router
 			
 			const route= new Route( meta, );
 			
+			if( meta.id )
+				this.#identifications.set( meta.id, route, );
+			
 			return route;
 		}, );
+	}
+	
+	/**
+	 * Get a route by identifier
+	 * 
+	 * @param id <mixed>
+	 */
+	getRoute( id, )
+	{
+		return this.#identifications.get( id, );
 	}
 }
 

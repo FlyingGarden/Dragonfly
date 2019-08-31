@@ -1,3 +1,4 @@
+import Query from './Query.js';
 
 export default class Request
 {
@@ -5,6 +6,16 @@ export default class Request
 	 * @type (string)
 	 */
 	#url;
+	
+	/**
+	 * @type (string)
+	 */
+	#path;
+	
+	/**
+	 * @type {Query}
+	 */
+	#query;
 	
 	/**
 	 * @type (string)
@@ -26,6 +37,11 @@ export default class Request
 		this.#url= denoRequest.url;
 		this.#method= denoRequest.method;
 		this.#headers= denoRequest.headers;
+		
+		const [ path, query='', ]= this.#url.split( '?', );
+		
+		this.#path= path;
+		this.#query= new Query( query, );
 	}
 	
 	/**
@@ -34,6 +50,22 @@ export default class Request
 	get url()
 	{
 		return this.#url;
+	}
+	
+	/**
+	 * @return (string)
+	 */
+	get path()
+	{
+		return this.#path;
+	}
+	
+	/**
+	 * @return {Query}
+	 */
+	get query()
+	{
+		return this.#query;
 	}
 	
 	/**

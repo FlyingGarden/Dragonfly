@@ -56,6 +56,14 @@ export default class App
 		const handle= async ( denoRequest, )=> {
 			const request= new Request( denoRequest, );
 			
+			const route= this.#router.dispatch( request, );
+			
+			if( route )
+			{
+				const response= await route.run( { request, app:this, }, );
+				
+				denoRequest.respond( response, );
+			}
 		};
 		
 		const server= HttpServer.serve( host, )[Symbol.asyncIterator]();

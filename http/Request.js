@@ -1,4 +1,5 @@
 import Query from './Query.js';
+import { AcceptArray, } from './accept.js';
 
 export default class Request
 {
@@ -28,6 +29,11 @@ export default class Request
 	#headers;
 	
 	/**
+	 * @type {AcceptArray}
+	 */
+	#accept;
+	
+	/**
 	 * Construct a HTTP request (server-side)
 	 * 
 	 * @param denoRequest ServerRequest
@@ -42,6 +48,8 @@ export default class Request
 		
 		this.#path= path;
 		this.#query= new Query( query, );
+		
+		this.#accept= new AcceptArray( this.#headers.get( 'Accept', ) || '*/*', path, );
 	}
 	
 	/**
@@ -82,5 +90,13 @@ export default class Request
 	get headers()
 	{
 		return this.#headers;
+	}
+	
+	/**
+	 * @return {AcceptArray}
+	 */
+	get accept()
+	{
+		return this.#accept;
 	}
 }

@@ -61,4 +61,79 @@ export default class Response
 	{
 		return this.#body;
 	}
+	
+	/**
+	 * Construct a HTML response
+	 * 
+	 * @param body       (string)
+	 * @param 1.?status  (number)
+	 * @param 1.?headers {}
+	 * 
+	 * @return {Response}
+	 */
+	static newHTML( body, { status=200, headers={}, }={}, )
+	{
+		return new this( { status, body, headers:{
+			'Content-Type': 'text/html;charset=utf-8',
+			...headers,
+		}, }, );
+	}
+	
+	/**
+	 * Construct a JSON response
+	 * 
+	 * @param body       (string)  JSON string
+	 *                   <mixed>   something will be JSON.stringified
+	 * @param 1.?status  (number)
+	 * @param 1.?headers {}
+	 * 
+	 * @return {Response}
+	 */
+	static newJSON( body=null, { status=200, headers={}, }={}, )
+	{
+		if(!( typeof body === 'string' && isJson( body, ) ))
+			body= JSON.stringify( body, );
+		
+		return new this( { status, body, headers:{
+			'Content-Type': 'application/json',
+			...headers,
+		}, }, );
+	}
+	
+	/**
+	 * Construct a redirect response
+	 * 
+	 * @param location   (string)  location URL
+	 *                   <mixed>   something will be JSON.stringified
+	 * @param 1.?status  (number)
+	 * @param 1.?headers {}
+	 * 
+	 * @return {Response}
+	 */
+	static redirect( location, { status=301, headers={}, }={}, )
+	{
+		return new this( { status, headers:{
+			'Location': location,
+			...headers,
+		}, }, );
+	}
+}
+
+/**
+ * Check whether a string is a JSON string
+ * 
+ * @param string (string)
+ * 
+ * @return (boolean)
+ */
+function isJson( string, )
+{
+	try
+	{
+		return JSON.parse( string, ()=> true, );
+	}
+	catch( e )
+	{
+		return false;
+	}
 }

@@ -1,6 +1,9 @@
 import * as HttpServer from './utils/http-server.js';
 import * as Path from './utils/path.js';
+import { file_length, read_file, is_file, file_exists, } from './utils/fs.js';
 import Request from './http/Request.js';
+import Response from './http/Response.js';
+import { ext2mime, } from './http/mime.js';
 
 /**
  * main Application class of Dragonfly
@@ -64,6 +67,13 @@ export default class App
 				
 				denoRequest.respond( response, );
 			}
+			else
+			if( await this.hasFile( request.path, ) )
+			{
+				const path= `${this.#webRoot}${request.path}`;
+				
+				denoRequest.respond( await makeFileResponse( path, ), );
+			}
 		};
 		
 		const server= HttpServer.serve( host, )[Symbol.asyncIterator]();
@@ -75,6 +85,20 @@ export default class App
 			else
 				await timeout();
 		}
+	}
+	
+	/**
+	 * Check whether a file exists in web root.
+	 * 
+	 * @param path (string)
+	 * 
+	 * @return ~(boolean)
+	 */
+	async hasFile( path, )
+	{
+		path= `${this.#webRoot}${path}`;
+		
+		return (await file_exists( path, )) && (await is_file( path, ));
 	}
 }
 
@@ -88,4 +112,32 @@ function defaultWebRoot()
 	const file= Path.traceBack( 2, );
 	
 	return Path.dirname( file, ).replace( /^file:\/\//, '', ).replace( /\/([A-Z]:\/)/, '$1', );
+}
+
+/**
+ * Make file response
+ * 
+ * @access private
+ * 
+ * @param path (string)
+ * 
+ * @return ~{Response}
+ */
+async function makeFileResponse( path, )
+{
+	const ext= (x=> x? x[0]: '')( path.match( /\.\w+$/, ), );
+	const mime= ext2mime( ext, ) || 'text/plain';
+	
+	const $content= read_file( path, { asText:false, }, );
+	const $length= file_length( path, );
+	
+	return new Response( {
+		body: await $content,
+		status: 200,
+		headers: {
+			'Content-Type': mime,
+			'Content-Length': await $length,
+			'Access-Control-Allow-Origin': '*',
+		},
+	}, );
 }

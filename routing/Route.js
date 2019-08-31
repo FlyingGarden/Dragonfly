@@ -74,4 +74,23 @@ export default class Route
 		
 		return level;
 	}
+	
+	/**
+	 * get controller
+	 * 
+	 * @return ~{Fundction}
+	 */
+	async getController()
+	{
+		if( this.#controller instanceof Function )
+			return this.#controller;
+		else
+		{
+			const $module= import(this.#controller).catch( e=> {
+				throw new Error( `There is something wrong with controller [${this.#controller}]:\n\n${e}`, );
+			}, );
+			
+			return (await $module).default;
+		}
+	}
 }

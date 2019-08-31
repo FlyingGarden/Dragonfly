@@ -1,5 +1,6 @@
 import * as HttpServer from './utils/http-server.js';
 import * as Path from './utils/path.js';
+import Request from './http/Request.js';
 
 /**
  * main Application class of Dragonfly
@@ -53,6 +54,7 @@ export default class App
 		};
 		
 		const handle= async ( denoRequest, )=> {
+			const request= new Request( denoRequest, );
 			
 		};
 		

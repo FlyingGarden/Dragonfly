@@ -1,3 +1,4 @@
+import Response from '../http/Response.js';
 
 export default class Route
 {
@@ -76,6 +77,41 @@ export default class Route
 	}
 	
 	/**
+	 * Run the route.
+	 * 
+	 * @param 0.request {Request}
+	 * @param 0.app     {App}
+	 * 
+	 * @return {Response}
+	 */
+	async run( { request, app, }, )
+	{
+		const args= request.path.matchGroup( this.#path, );
+		
+		let responded, status;
+		
+		try
+		{
+			const controller= await this.getController();
+			
+			responded= await controller( { app, request, Response, args, }, );
+			status= 200;
+		}
+		catch( e )
+		{
+			console.error( e, );
+			
+			responded= e;
+			status= 500;
+		}
+		
+		if( responded instanceof Response )
+			return responded;
+		
+		return this.#makeResponse( responded, status, );
+	}
+	
+	/**
 	 * get controller
 	 * 
 	 * @return ~{Fundction}
@@ -93,4 +129,44 @@ export default class Route
 			return (await $module).default;
 		}
 	}
+	
+	/**
+	 * Make response depends on accept
+	 * 
+	 * @param responded <any>
+	 * 
+	 * @return {Response}
+	 */
+	#makeResponse= ( responded, status=200, headers={}, )=> {
+		switch( this.#accept )
+		{
+			default:
+			case 'text/html':
+				return Response.newHTML( `${responded}`, { status, headers, }, );
+			break;
+			
+			case 'application/json':
+				return new Response( {
+					body: JSON.stringify( responded, ),
+					status,
+					headers: {
+						...headers,
+						'Content-Type': 'application/json',
+					},
+				}, );
+			break;
+			
+			case 'text/javascript':
+			case 'application/javascript':
+				return new Response( {
+					body: `${responded}`,
+					status,
+					headers: {
+						...headers,
+						'Content-Type': 'application/javascript',
+					},
+				}, );
+			break;
+		}
+	};
 }

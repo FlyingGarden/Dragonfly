@@ -121,12 +121,20 @@ export default class Route
 		if( this.#controller instanceof Function )
 			return this.#controller;
 		else
+		if( this.#controller instanceof String )
 		{
-			const $module= import(this.#controller).catch( e=> {
+			const [ url, name='default', ]= this.#controller.split( '#', );
+			
+			const $module= import (url).catch( e=> {
 				throw new Error( `There is something wrong with controller [${this.#controller}]:\n\n${e}`, );
 			}, );
 			
-			return (await $module).default;
+			const controller= (await $module)[name];
+			
+			if(!( controller instanceof Function ))
+				throw new Error( `controller '${this.#controller}' is not a function`, );
+			
+			return controller;
 		}
 	}
 	

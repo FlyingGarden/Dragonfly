@@ -25,7 +25,7 @@ export default class Router
 	 * @param 0.routes          {}[]
 	 * @param 0.?controllerPath (string)
 	 */
-	constructor( { routes, controllerPath=defaultControllerPath(), }, )
+	constructor( { routes=[], controllerPath=defaultControllerPath(), }={}, )
 	{
 		this.#controllerPath=controllerPath;
 		

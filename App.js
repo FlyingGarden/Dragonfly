@@ -1,6 +1,7 @@
 import * as HttpServer from './utils/http-server.js';
 import * as Path from './utils/path.js';
 import { file_length, read_file, is_file, file_exists, } from './utils/fs.js';
+import Router from './routing/Router.js';
 import Request from './http/Request.js';
 import Response from './http/Response.js';
 import { ext2mime, } from './http/mime.js';
@@ -27,7 +28,7 @@ export default class App
 	 * @param 0.router  {Router}
 	 * @param 0.webRoot (string)
 	 */
-	constructor( { router, webRoot=defaultWebRoot(), }, )
+	constructor( { router=new Router(), webRoot=defaultWebRoot(), }={}, )
 	{
 		this.#router= router;
 		this.#webRoot= webRoot;

@@ -92,7 +92,7 @@ export default class Route
 		
 		try
 		{
-			const controller= await this.getController();
+			const controller= await loadFunction( this.#controller, );
 			
 			responded= await controller( { app, request, Response, args, }, );
 			status= 200;
@@ -109,33 +109,6 @@ export default class Route
 			return responded;
 		
 		return this.#makeResponse( responded, status, );
-	}
-	
-	/**
-	 * get controller
-	 * 
-	 * @return ~{Fundction}
-	 */
-	async getController()
-	{
-		if( this.#controller instanceof Function )
-			return this.#controller;
-		else
-		if( this.#controller instanceof String )
-		{
-			const [ url, name='default', ]= this.#controller.split( '#', );
-			
-			const $module= import (url).catch( e=> {
-				throw new Error( `There is something wrong with controller [${this.#controller}]:\n\n${e}`, );
-			}, );
-			
-			const controller= (await $module)[name];
-			
-			if(!( controller instanceof Function ))
-				throw new Error( `controller '${this.#controller}' is not a function`, );
-			
-			return controller;
-		}
 	}
 	
 	/**
@@ -177,4 +150,28 @@ export default class Route
 			break;
 		}
 	};
+}
+
+async function loadFunction( funcOrName, )
+{
+	if( funcOrName instanceof Function )
+		return funcOrName;
+	else
+	if( funcOrName instanceof String )
+	{
+		const [ url, name='default', ]= funcOrName.split( '#', );
+		
+		const $module= import (url).catch( e=> {
+			throw new Error( `There is something wrong on loading [${funcOrName}]:\n\n${e}`, );
+		}, );
+		
+		const func= (await $module)[name];
+		
+		if(!( func instanceof Function ))
+			throw new Error( `'${funcOrName}' is not a function`, );
+		
+		return func;
+	}
+	else
+		throw new Error( `Invalid function ${funcOrName}`, );
 }

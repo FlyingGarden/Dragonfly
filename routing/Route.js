@@ -88,68 +88,67 @@ export default class Route
 	{
 		const args= request.path.matchGroup( this.#path, );
 		
-		let responded, status;
+		const payload= { request, Response, args, ...rest, };
 		
 		try
 		{
-			const controller= await loadFunction( this.#controller, );
+			const process= wrapController( await loadFunction( this.#controller, ), this.#accept, );
 			
-			responded= await controller( { request, Response, args, ...rest, }, );
-			status= 200;
+			return process( payload, );
 		}
 		catch( e )
 		{
 			console.error( e, );
 			
-			responded= e;
-			status= 500;
+			return makeResponse( this.#accept, e, 500, );
 		}
+	}
+}
+
+function wrapController( controller, accept, )
+{
+	return async payload=> {
+		const responded= await controller( payload, );
 		
 		if( responded instanceof Response )
 			return responded;
-		
-		return this.#makeResponse( responded, status, );
+		else
+			return makeResponse( accept, responded, );
 	}
-	
-	/**
-	 * Make response depends on accept
-	 * 
-	 * @param responded <any>
-	 * 
-	 * @return {Response}
-	 */
-	#makeResponse= ( responded, status=200, headers={}, )=> {
-		switch( this.#accept )
-		{
-			default:
-			case 'text/html':
-				return Response.newHTML( `${responded}`, { status, headers, }, );
-			break;
-			
-			case 'application/json':
-				return new Response( {
-					body: JSON.stringify( responded, ),
-					status,
-					headers: {
-						...headers,
-						'Content-Type': 'application/json',
-					},
-				}, );
-			break;
-			
-			case 'text/javascript':
-			case 'application/javascript':
-				return new Response( {
-					body: `${responded}`,
-					status,
-					headers: {
-						...headers,
-						'Content-Type': 'application/javascript',
-					},
-				}, );
-			break;
-		}
-	};
+}
+
+function makeResponse( accept, responded, status=200, headers={}, )
+{
+	switch( accept )
+	{
+		default:
+		case 'text/html':
+			return Response.newHTML( `${responded}`, { status, headers, }, );
+		break;
+		
+		case 'application/json':
+			return new Response( {
+				body: JSON.stringify( responded, ),
+				status,
+				headers: {
+					...headers,
+					'Content-Type': 'application/json',
+				},
+			}, );
+		break;
+		
+		case 'text/javascript':
+		case 'application/javascript':
+			return new Response( {
+				body: `${responded}`,
+				status,
+				headers: {
+					...headers,
+					'Content-Type': 'application/javascript',
+				},
+			}, );
+		break;
+	}
 }
 
 async function loadFunction( funcOrName, )

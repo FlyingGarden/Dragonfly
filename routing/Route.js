@@ -23,6 +23,11 @@ export default class Route
 	#controller;
 	
 	/**
+	 * @type < (string) | { next:=>, request:{Request}, Response:Response, args:{}, ... }=><{Response}> >
+	 */
+	#middlewares;
+	
+	/**
 	 * Construct a route
 	 * 
 	 * @param 0.path       (string)       exact path pattern
@@ -32,12 +37,13 @@ export default class Route
 	 * @param 0.controller (string)       controller module path [dynamic], [recommanded].
 	 *                     {Function}     built-in controller, generally for simple controllers.
 	 */
-	constructor( { path, method='*', accept='*/*', controller, }, )
+	constructor( { path, method='*', accept='*/*', controller, middlewares=[], }, )
 	{
 		this.#path= path;
 		this.#method= method;
 		this.#accept= accept;
 		this.#controller= controller;
+		this.#middlewares= middlewares;
 	}
 	
 	/**
@@ -92,7 +98,18 @@ export default class Route
 		
 		try
 		{
-			const process= wrapController( await loadFunction( this.#controller, ), this.#accept, );
+			const $controller= loadFunction( this.#controller, );
+			const $middlewares= Promise.all( this.#middlewares.map( loadFunction, ), );
+			
+			const controller= await $controller;
+			const middlewares= await $middlewares;
+			
+			const process= middlewares.reduceRight(
+				( process, middleware, )=>
+					async payload=> middleware( payload, process, )
+				,
+				wrapController( controller, this.#accept, ),
+			);
 			
 			return process( payload, );
 		}

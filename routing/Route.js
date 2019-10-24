@@ -18,7 +18,7 @@ export default class Route
 	#accept;
 	
 	/**
-	 * @type < (string) | ()=><{Response}|(string)> >
+	 * @type < (string) | { request:{Request}, Response:Response, args:{}, ... }=><{Response}|(string)> >
 	 */
 	#controller;
 	
@@ -80,11 +80,11 @@ export default class Route
 	 * Run the route.
 	 * 
 	 * @param 0.request {Request}
-	 * @param 0.app     {App}
+	 * @param 0...rest  {}
 	 * 
 	 * @return {Response}
 	 */
-	async run( { request, app, }, )
+	async run( { request, ...rest }, )
 	{
 		const args= request.path.matchGroup( this.#path, );
 		
@@ -94,7 +94,7 @@ export default class Route
 		{
 			const controller= await loadFunction( this.#controller, );
 			
-			responded= await controller( { app, request, Response, args, }, );
+			responded= await controller( { request, Response, args, ...rest, }, );
 			status= 200;
 		}
 		catch( e )

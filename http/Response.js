@@ -1,3 +1,4 @@
+import '../utils/better-js.js';
 import { encode, } from '../utils/text-encoder.js';
 
 export default class Response

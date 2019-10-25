@@ -1,3 +1,4 @@
+import '../utils/better-js.js';
 import Route from './Route.js';
 import Response from '../http/Response.js';
 

@@ -1,3 +1,4 @@
+import '../utils/better-js.js';
 
 const EXT2MIME= {
 	'atom':    'application/atom+xml',

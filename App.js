@@ -1,3 +1,4 @@
+import './utils/better-js.js';
 import * as HttpServer from './utils/http-server.js';
 import * as Path from './utils/path.js';
 import { file_length, read_file, is_file, file_exists, } from './utils/fs.js';

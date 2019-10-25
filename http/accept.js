@@ -1,3 +1,4 @@
+import '../utils/better-js.js';
 import { ext2mime, } from './mime.js';
 
 export class AcceptArray extends Array

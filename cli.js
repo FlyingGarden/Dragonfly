@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno --allow-net --allow-read
-import 'https://better-js.fenz.land/index.js';
+import './utils/better-js.js';
 import App from './App.js';
 import Args from './utils/Args.js';
 

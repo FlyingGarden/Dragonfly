@@ -1,3 +1,4 @@
+import '../utils/better-js.js';
 import Query from './Query.js';
 import { AcceptArray, } from './accept.js';
 

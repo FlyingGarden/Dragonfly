@@ -1,3 +1,4 @@
+import './better-js.js';
 
 export default class Args
 {

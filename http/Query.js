@@ -1,3 +1,4 @@
+import '../utils/better-js.js';
 
 export default class Query
 {

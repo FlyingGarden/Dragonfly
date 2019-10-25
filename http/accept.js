@@ -13,7 +13,7 @@ export class AcceptArray extends Array
 	{
 		super();
 		
-		const ext= (x=> x? x[0]: '')( path.match( /\.\w+$/, ), );
+		const ext= path.matchGroup( /\.\w+$/, 0, );
 		if( ext )
 		{
 			const mime= ext2mime( ext, );

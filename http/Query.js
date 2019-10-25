@@ -215,7 +215,7 @@ function deeplyDelete( object, prevKey, keys, )
 		return;
 	
 	if( keys.length )
-		deeplySet( object[prevKey], currentKey, keys, value );
+		deeplyDelete( object[prevKey], currentKey, keys, );
 	else
 		delete object[prevKey];
 }

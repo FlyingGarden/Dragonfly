@@ -13,11 +13,25 @@ export async function is_file( path, )
 	return (await Deno.stat( path, )).isFile();
 }
 
+/**
+ * Get file length or say size.
+ * 
+ * @param path (string)
+ * 
+ * @return ~(number)
+ */
 export async function file_length( path, )
 {
 	return (await Deno.stat( path, )).len;
 }
 
+/**
+ * Read file and return content.
+ * 
+ * @param path (string)
+ * 
+ * @return ~(string)
+ */
 export async function read_file( path, { asText=true, }={}, )
 {
 	const $array= await Deno.readFile( path, );

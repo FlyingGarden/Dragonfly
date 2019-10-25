@@ -32,7 +32,7 @@ export default class Router
 		
 		this.#routes= routes.map( meta=> {
 			if( typeof meta.controller === 'string' )
-				meta.controller= controllerPath + meta.controller;
+				meta.controller= `${controllerPath}${meta.controller}`;
 			
 			const route= new Route( meta, );
 			

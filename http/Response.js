@@ -33,7 +33,7 @@ export default class Response
 		if( typeof body === 'string' )
 		{
 			this.#body= encode( body, );
-			this.#headers.set( 'Content-Length', this.#body.length, )
+			this.#headers.set( 'Content-Length', `${this.#body.length}`, );
 		}
 		else
 			this.#body= body;

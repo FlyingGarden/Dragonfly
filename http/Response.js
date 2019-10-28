@@ -14,14 +14,14 @@ export default class Response
 	#headers;
 	
 	/**
-	 * @type (string)
+	 * @type <{Uint8Array}|{Reader}>
 	 */
 	#body;
 	
 	/**
 	 * Construct a response (server-side)
 	 * 
-	 * @param 0.body     <mixed>
+	 * @param 0.body     <(string)|{Uint8Array}|{Reader}>
 	 * @param 0.?status  (number)
 	 * @param 0.?headers {}
 	 */
@@ -56,7 +56,7 @@ export default class Response
 	}
 	
 	/**
-	 * @return (string)
+	 * @return <{Uint8Array}|{Reader}>
 	 */
 	get body()
 	{

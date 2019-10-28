@@ -1,7 +1,7 @@
 import './utils/better-js.js';
 import * as HttpServer from './utils/http-server.js';
 import * as Path from './utils/path.js';
-import { file_length, read_file, is_file, file_exists, } from './utils/fs.js';
+import { file_length, open_file, is_file, file_exists, } from './utils/fs.js';
 import Router from './routing/Router.js';
 import Request from './http/Request.js';
 import Response from './http/Response.js';
@@ -101,9 +101,9 @@ export default class App
 	 */
 	async hasFile( path, )
 	{
-		path= `${this.#webRoot}${path}`;
+		const realPath= `${this.#webRoot}${path}`;
 		
-		return (await file_exists( path, )) && (await is_file( path, ));
+		return (await file_exists( realPath, )) && (await is_file( realPath, ));
 	}
 }
 
@@ -133,11 +133,11 @@ async function makeFileResponse( path, )
 	const ext= (x=> x? x[0]: '')( path.match( /\.\w+$/, ), );
 	const mime= ext2mime( ext, ) || 'text/plain';
 	
-	const $content= read_file( path, { asText:false, }, );
+	const $reader= open_file( path, );
 	const $length= file_length( path, );
 	
 	return new Response( {
-		body: await $content,
+		body: await $reader,
 		status: 200,
 		headers: {
 			'Content-Type': mime,

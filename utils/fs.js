@@ -41,3 +41,15 @@ export async function read_file( path, { asText=true, }={}, )
 	else
 		return $array;
 }
+
+/**
+ * Open file and return reader.
+ * 
+ * @param path (string)
+ * 
+ * @return ~{Reader}
+ */
+export async function open_file( path, )
+{
+	return Deno.open( path, );
+}

@@ -42,34 +42,12 @@ export default class App
 	 * 
 	 * @return ~<void>
 	 */
-	async listenHTTP( host, { concurrency=1024, }={}, )
+	async listenHTTP( host, )
 	{
-		let listening= 0;
-		
-		const listen= async ( server, )=> {
-			++listening;
-			
-			const { value, done, }= await server.next();
-			
-			--listening;
-			
-			if( done )
-				return;
-			
-			this.handle( new Request( value, ), )
-				.then( response=> value.respond( response, ), )
+		for await( const denoRequest of HttpServer.serve( host, ) )
+			this.handle( new Request( denoRequest, ), )
+				.then( response=> denoRequest.respond( response, ), )
 			;
-		};
-		
-		const server= HttpServer.serve( host, )[Symbol.asyncIterator]();
-		
-		while( true )
-		{
-			if( listening < concurrency )
-				listen( server, );
-			else
-				await timeout();
-		}
 	}
 	
 	/**

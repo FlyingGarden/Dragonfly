@@ -87,7 +87,7 @@ export default class App
 			return route.run( { request, app:this, }, );
 		else
 		if( await this.hasFile( request.path, ) )
-			return makeFileResponse( `${this.#webRoot}${request.path}`, );
+			return makeFileResponse( this.localPath( request.path, ), );
 		else
 			return notFound( { request, app:this, }, );
 	}
@@ -101,9 +101,17 @@ export default class App
 	 */
 	async hasFile( path, )
 	{
-		const realPath= `${this.#webRoot}${path}`;
+		const localPath= this.localPath( path, );
 		
-		return (await file_exists( realPath, )) && (await is_file( realPath, ));
+		return (await file_exists( localPath, )) && (await is_file( localPath, ));
+	}
+	
+	/**
+	 * Transform url path into local path
+	 */
+	localPath( path, )
+	{
+		return `${this.#webRoot}${path}`;
 	}
 }
 

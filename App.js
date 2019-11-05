@@ -56,29 +56,9 @@ export default class App
 			if( done )
 				return;
 			
-			handle( value, );
-		};
-		
-		const handle= async ( denoRequest, )=> {
-			const request= new Request( denoRequest, );
-			
-			const route= this.#router.dispatch( request, );
-			
-			if( route )
-			{
-				const response= await route.run( { request, app:this, }, );
-				
-				denoRequest.respond( response, );
-			}
-			else
-			if( await this.hasFile( request.path, ) )
-			{
-				const path= `${this.#webRoot}${request.path}`;
-				
-				denoRequest.respond( await makeFileResponse( path, ), );
-			}
-			else
-				denoRequest.respond( await notFound( { request, app:this, }, ), );
+			this.handle( new Request( value, ), )
+				.then( response=> value.respond( response, ), )
+			;
 		};
 		
 		const server= HttpServer.serve( host, )[Symbol.asyncIterator]();
@@ -90,6 +70,26 @@ export default class App
 			else
 				await timeout();
 		}
+	}
+	
+	/**
+	 * Handle a single deno request
+	 * 
+	 * @param denoRequest {Request}
+	 * 
+	 * @return ~{Response}
+	 */
+	async handle( request, )
+	{
+		const route= this.#router.dispatch( request, );
+		
+		if( route )
+			return route.run( { request, app:this, }, );
+		else
+		if( await this.hasFile( request.path, ) )
+			return makeFileResponse( `${this.#webRoot}${request.path}`, );
+		else
+			return notFound( { request, app:this, }, );
 	}
 	
 	/**

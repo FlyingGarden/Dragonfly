@@ -51,6 +51,10 @@ export default class Request
 		this.#query= new Query( query, );
 		
 		this.#accept= new AcceptArray( this.#headers.get( 'Accept', ) || '*/*', path, );
+		
+		return (async ()=> {
+			return this;
+		})();
 	}
 	
 	/**

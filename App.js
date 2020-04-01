@@ -45,8 +45,9 @@ export default class App
 	async listenHTTP( host, )
 	{
 		for await( const denoRequest of HttpServer.serve( host, ) )
-			this.handle( new Request( denoRequest, ), )
-				.then( response=> denoRequest.respond( response, ), )
+			new Request( denoRequest, )
+				.then( this['::'].handle, )
+				.then( denoRequest['::'].respond, )
 			;
 	}
 	

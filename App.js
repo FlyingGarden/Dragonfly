@@ -54,7 +54,7 @@ export default class App
 	/**
 	 * Handle a single deno request
 	 * 
-	 * @param denoRequest {Request}
+	 * @param request {Request}
 	 * 
 	 * @return ~{Response}
 	 */

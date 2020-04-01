@@ -41,6 +41,11 @@ export default class Request
 	#body;
 	
 	/**
+	 * @type (string)
+	 */
+	#contentType;
+	
+	/**
 	 * Construct a HTTP request (server-side)
 	 * 
 	 * @param denoRequest ServerRequest
@@ -57,6 +62,8 @@ export default class Request
 		this.#query= new Query( query, );
 		
 		this.#accept= new AcceptArray( this.#headers.get( 'Accept', ) || '*/*', path, );
+		
+		this.#contentType= this.#headers.get( 'Content-Type', ) || 'application/octet-stream';
 		
 		return (async ()=> {
 			this.#body= await Deno.readAll( denoRequest.body, );
@@ -127,5 +134,36 @@ export default class Request
 	get text()
 	{
 		return decode( this.#body, );
+	}
+	
+	/**
+	 * @return <{Uint8Array}|(string)|{Query}|mixed>
+	 */
+	get contentType()
+	{
+		return this.#contentType;
+	}
+	
+	/**
+	 * @return {AcceptArray}
+	 */
+	get content()
+	{
+		if( this.#contentType === 'application/octet-stream' )
+			return this.#body;
+		
+		const content= decode( this.#body, );
+		
+		switch( this.#contentType )
+		{
+			default:
+				return content;
+			
+			case 'application/json':
+				return JSON.parse( content, );
+			
+			case 'application/x-www-form-urlencoded':
+				return new Query( content, );
+		}
 	}
 }

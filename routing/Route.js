@@ -114,11 +114,14 @@ export default class Route
 			
 			return process( payload, );
 		}
-		catch( e )
+		catch( error )
 		{
-			console.error( e, );
+			if( error instanceof Response )
+				return Response;
 			
-			return makeResponse( this.#accept, e, 500, );
+			console.error( error, );
+			
+			return makeResponse( this.#accept, error, 500, );
 		}
 	}
 }

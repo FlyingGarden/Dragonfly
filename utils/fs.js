@@ -1,5 +1,5 @@
 import { decode, } from './text-encoder.js';
-export { exists as file_exists, } from 'https://deno.land/std@v0.24.0/fs/exists.ts';
+export { exists as file_exists, } from 'https://deno.land/std@v0.30.0/fs/exists.ts';
 
 /**
  * Check whether a file is a file (not directory or symbol link).

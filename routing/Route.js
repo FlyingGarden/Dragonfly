@@ -144,7 +144,7 @@ function makeResponse( accept, responded, status=200, headers={}, )
 	{
 		default:
 		case 'text/html':
-			return Response.newHTML( `${responded}`, { status, headers, }, );
+			return Response.newHTML( `${responded??''}`, { status, headers, }, );
 		break;
 		
 		case 'application/json':

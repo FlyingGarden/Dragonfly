@@ -1,6 +1,7 @@
 import '../utils/better-js.js';
 import Query from './Query.js';
 import { AcceptArray, } from './accept.js';
+import { decode, } from '../utils/text-encoder.js';
 
 export default class Request
 {
@@ -35,6 +36,11 @@ export default class Request
 	#accept;
 	
 	/**
+	 * @type {Uint8Array}
+	 */
+	#body;
+	
+	/**
 	 * Construct a HTTP request (server-side)
 	 * 
 	 * @param denoRequest ServerRequest
@@ -53,6 +59,8 @@ export default class Request
 		this.#accept= new AcceptArray( this.#headers.get( 'Accept', ) || '*/*', path, );
 		
 		return (async ()=> {
+			this.#body= await Deno.readAll( denoRequest.body, );
+			
 			return this;
 		})();
 	}
@@ -103,5 +111,21 @@ export default class Request
 	get accept()
 	{
 		return this.#accept;
+	}
+	
+	/**
+	 * @return {Uint8Array}
+	 */
+	get body()
+	{
+		return this.#body;
+	}
+	
+	/**
+	 * @return (string)
+	 */
+	get text()
+	{
+		return decode( this.#body, );
 	}
 }
